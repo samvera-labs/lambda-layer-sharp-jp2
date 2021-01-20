@@ -1,0 +1,11 @@
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    allow:
+      - dependency-name: "sharp"
+    labels:
+      - "sharp-update"
+    versioning-strategy: "lockfile-only"

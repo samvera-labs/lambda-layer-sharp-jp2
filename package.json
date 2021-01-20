@@ -5,13 +5,13 @@
   "license": "Apache License 2.0",
   "module": "lambda-layer-sharp",
   "devDependencies": {
+    "copy-webpack-plugin": "^6.1.0",
     "webpack": "^4.44.1",
     "webpack-cli": "^3.3.12",
-    "zip-webpack-plugin": "^3.0.0",
-    "copy-webpack-plugin": "^6.1.0"
+    "zip-webpack-plugin": "^3.0.0"
   },
   "dependencies": {
-    "sharp": "^0.27.0"
+    "sharp": "latest"
   },
   "engines": {
     "node": ">=12.14.0"
