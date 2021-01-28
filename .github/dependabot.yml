@@ -7,5 +7,5 @@ updates:
     allow:
       - dependency-name: "sharp"
     labels:
-      - "sharp-update"
+      - "sharp update"
     versioning-strategy: "lockfile-only"
