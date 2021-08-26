@@ -42,7 +42,11 @@ module.exports = {
     path: path.resolve(__dirname, 'dist'),
     libraryTarget: 'commonjs2',
   },
-  externals: {
-    '../build/Release/sharp.node': './build/Release/sharp.node',
-  },
+  externals: ({ context, request }, callback) => {
+    if (/.node$/.test(request)) {
+      // if it's a binary, load as an external
+      return callback(null, 'commonjs ' + request);
+    }
+    callback();
+  }
 };
