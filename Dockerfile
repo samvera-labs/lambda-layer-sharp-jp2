@@ -12,7 +12,7 @@ RUN npm --no-optional --no-audit --progress=false install
 
 RUN node ./node_modules/webpack/bin/webpack.js
 
-RUN node -e "console.log(require('sharp'))"
+RUN node ./test.js || (echo 'Test failed'; exit 1)
 
 RUN mkdir /dist && \
   echo "cp /build/dist/sharp-layer.zip /dist/sharp-layer.$(uname -m).zip" > /entrypoint.sh && \
