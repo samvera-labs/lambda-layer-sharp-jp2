@@ -7,7 +7,7 @@ This AWS Lambda layer contains a pre-built [Sharp](https://www.npmjs.com/package
 
 ## Download
 
-A pre-built layer zip file is available on the [Releases page](https://github.com/bubblydoo/lambda-layer-sharp/releases), alongside the size of the layer.
+A pre-built layer zip file is available on the [Releases page](https://github.com/bubblydoo/lambda-layer-sharp/releases), alongside the size of the layer. Zip files for both x86_64 and arm64 are available.
 
 ## Build
 

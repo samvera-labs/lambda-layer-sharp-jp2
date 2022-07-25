@@ -44,8 +44,11 @@ module.exports = {
   },
   externals: ({ context, request }, callback) => {
     if (/.node$/.test(request)) {
-      // if it's a binary, load as an external
-      return callback(null, 'commonjs ' + request);
+      const sharpModulePath = path.join(__dirname, 'node_modules/sharp');
+      const absoluteBinaryPath = path.join(context, request);
+      const absoluteBundlePath = path.resolve(sharpModulePath, 'index.js');
+      const relativeToBundleBinaryPath = path.relative(path.dirname(absoluteBundlePath), absoluteBinaryPath);
+      return callback(null, 'commonjs ' + './' + relativeToBundleBinaryPath);
     }
     callback();
   }
