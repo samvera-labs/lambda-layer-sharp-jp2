@@ -3,3 +3,4 @@
 !package.json
 !webpack.config.js
 !test.js
+!build-sharp.sh

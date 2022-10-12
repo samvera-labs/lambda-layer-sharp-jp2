@@ -1,0 +1,4 @@
+#!/bin/bash
+
+docker buildx build --platform linux/amd64 --load -t serverless_iiif_dependencies .
+docker run -v $(pwd)/dist:/dist serverless_iiif_dependencies

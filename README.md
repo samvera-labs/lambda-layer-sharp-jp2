@@ -1,13 +1,13 @@
 # AWS Lambda layer for Sharp
 
-![Releases](https://img.shields.io/github/v/release/bubblydoo/lambda-layer-sharp.svg)
-![Build Layer ZIP](https://github.com/bubblydoo/lambda-layer-sharp/workflows/Build%20Layer%20ZIP/badge.svg)
+![Releases](https://img.shields.io/github/v/release/samvera-labs/lambda-layer-sharp-jp2.svg)
+![Build Layer ZIP](https://github.com/samvera-labs/lambda-layer-sharp-jp2/workflows/Build%20Layer%20ZIP/badge.svg)
 
 This AWS Lambda layer contains a pre-built [Sharp](https://www.npmjs.com/package/sharp) binary. New releases are automatically published in this repository on each Sharp update.
 
 ## Download
 
-A pre-built layer zip file is available on the [Releases page](https://github.com/bubblydoo/lambda-layer-sharp/releases), alongside the size of the layer. Zip files for both x86_64 and arm64 are available.
+A pre-built layer zip file is available on the [Releases page](https://github.com/samvera-labs/lambda-layer-sharp-jp2/releases), alongside the size of the layer. Zip files for both x86_64 and arm64 are available.
 
 ## Build
 
@@ -17,26 +17,18 @@ A pre-built layer zip file is available on the [Releases page](https://github.co
 
 ### Steps
 
-1. Clone the repo: 
+1. Clone the repo:
     ```sh
-    git clone git@github.com:bubblydoo/lambda-layer-sharp.git
-    cd lambda-layer-sharp/
-    ```
-1. Install dependencies:
-    ```sh
-    docker run -v "$PWD":/var/task lambci/lambda:build-nodejs12.x npm --no-optional --no-audit --progress=false install
+    git clone git@github.com:samvera-labs/lambda-layer-sharp-jp2.git
+    cd lambda-layer-sharp-jp2/
     ```
 1. Build the layer:
     ```sh
-    docker run -v "$PWD":/var/task lambci/lambda:build-nodejs12.x node ./node_modules/webpack/bin/webpack.js
-    ```
-1. Perform a smoke-test:
-    ```sh
-    docker run -w /var/task/dist/nodejs -v "$PWD":/var/task lambci/lambda:build-nodejs12.x node -e "console.log(require('sharp'))"
+    bin/build
     ```
 1. Import created layer into your AWS account:
     ```sh
-    aws lambda publish-layer-version --layer-name sharp --description "Sharp layer" --license-info "Apache License 2.0" --zip-file fileb://dist/sharp-layer.zip --compatible-runtimes nodejs12.x
+    aws lambda publish-layer-version --layer-name sharp-jp2 --description "Sharp layer with JP2 Support" --license-info "Apache License 2.0" --zip-file fileb://dist/sharp-layer.zip --compatible-runtimes nodejs16.x
     ```
 
 ## Auto-publish
@@ -45,4 +37,4 @@ The [build Github Action](/.github/workflows/docker-workflow.yml) is automatical
 
 ## Credits
 
-Originally forked from [Umkus/lambda-layer-sharp](https://github.com/Umkus/lambda-layer-sharp).
+Originally forked from [Umkus/lambda-layer-sharp-jp2](https://github.com/Umkus/lambda-layer-sharp-jp2). Auto build by [bubblydoo](https://github.com/bubblydoo/lambda-layer-sharp)
