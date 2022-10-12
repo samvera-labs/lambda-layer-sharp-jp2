@@ -2,7 +2,7 @@ pull_request_rules:
   - name: Automatic Sharp update merge
     conditions:
       - "check-success=build"
-      - base=master
+      - base=main
       - "label=sharp update"
     actions:
       merge:
