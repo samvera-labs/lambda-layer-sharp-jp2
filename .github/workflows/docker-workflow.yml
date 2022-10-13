@@ -49,23 +49,24 @@ jobs:
     - name: Load Docker images
       run: |
         docker buildx build --load --platform linux/amd64 -t amazon-linux-sharp-layer:dev-x86_64 . &&
-        docker buildx build --load --platform linux/arm64 -t amazon-linux-sharp-layer:dev-aarch64 .
+        # docker buildx build --load --platform linux/arm64 -t amazon-linux-sharp-layer:dev-aarch64 . &&
+        echo 'done'
     - name: Copy artifacts x86_64
       run: docker run --platform linux/amd64 -v "${{ github.workspace }}/dist":/dist-x86_64 amazon-linux-sharp-layer:dev-x86_64
-    - name: Copy artifacts aarch64
-      run: docker run --platform linux/arm64 -v "${{ github.workspace }}/dist":/dist-aarch64 amazon-linux-sharp-layer:dev-aarch64
+    # - name: Copy artifacts aarch64
+    #   run: docker run --platform linux/arm64 -v "${{ github.workspace }}/dist":/dist-aarch64 amazon-linux-sharp-layer:dev-aarch64
     - name: Upload artifacts x86_64
       uses: actions/upload-artifact@v2
       with:
         name: sharp-lambda-layer.x86_64.zip
         path: dist-x86_64/sharp-layer.x86_64.zip
         if-no-files-found: error
-    - name: Upload artifacts aarch64
-      uses: actions/upload-artifact@v2
-      with:
-        name: sharp-lambda-layer.aarch64.zip
-        path: dist-aarch64/sharp-layer.zip
-        if-no-files-found: error
+    # - name: Upload artifacts aarch64
+    #   uses: actions/upload-artifact@v2
+    #   with:
+    #     name: sharp-lambda-layer.aarch64.zip
+    #     path: dist-aarch64/sharp-layer.zip
+    #     if-no-files-found: error
     - name: Create release
       if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && steps.vars.outputs.release_exists == 'false' }}
       id: create_release
@@ -87,14 +88,14 @@ jobs:
         asset_path: dist/sharp-layer.x86_64.zip
         asset_name: sharp-lambda-layer.x86_64.zip
         asset_content_type: application/zip
-    - name: Upload release asset aarch64
-      if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && steps.vars.outputs.release_exists == 'false' }}
-      id: upload_release_asset_aarch64
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: dist/sharp-layer.aarch64.zip
-        asset_name: sharp-lambda-layer.aarch64.zip
-        asset_content_type: application/zip
+    # - name: Upload release asset aarch64
+    #   if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && steps.vars.outputs.release_exists == 'false' }}
+    #   id: upload_release_asset_aarch64
+    #   uses: actions/upload-release-asset@v1
+    #   env:
+    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #   with:
+    #     upload_url: ${{ steps.create_release.outputs.upload_url }}
+    #     asset_path: dist/sharp-layer.aarch64.zip
+    #     asset_name: sharp-lambda-layer.aarch64.zip
+    #     asset_content_type: application/zip
