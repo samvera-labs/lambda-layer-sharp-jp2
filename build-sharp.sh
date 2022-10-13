@@ -1,5 +1,5 @@
 # Variables
-SHARP_VERSION=0.30.7 #$(npm show sharp version)
+SHARP_VERSION=$(npm show sharp version)
 NODE_VERSION=$(node -v)
 
 # current dir where the build.sh is located
