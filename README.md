@@ -9,6 +9,16 @@ This AWS Lambda layer contains a pre-built [Sharp](https://www.npmjs.com/package
 
 A pre-built layer zip file is available on the [Releases page](https://github.com/samvera-labs/lambda-layer-sharp-jp2/releases), alongside the size of the layer. Zip files for both x86_64 and arm64 are available.
 
+## Shared Public Layer
+
+A public version of this layer is always available at `arn:aws:lambda:us-east-1:$REGION:layer:libvips-sharp-jp2:$VERSION`, where `$REGION` is any valid AWS region, and `$VERSION` is the layer version. The available versions can be listed using the AWS CLI command:
+```
+aws lambda list-layer-versions \
+    --layer-name arn:aws:lambda:$REGION:625046682746:layer:libvips-sharp-jp2 \
+    --query 'LayerVersions[*].LayerVersionArn' \
+    --output text
+```
+
 ## Build
 
 ### Dependencies
