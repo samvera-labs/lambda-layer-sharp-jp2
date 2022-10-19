@@ -1,6 +1,8 @@
+.aws-sam/
 .idea/
 coverage
 node_modules/
 dist/
 *.iml
 .DS_Store
+samconfig.toml
