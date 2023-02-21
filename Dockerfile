@@ -10,6 +10,8 @@
 # Use AWS Lambda node build environment
 FROM public.ecr.aws/sam/build-nodejs16.x:latest
 
+ARG GHOSTSCRIPT_VERSION=9.52 \
+    LIBVIPS_VERSION=8.12.1
 # Update all existing packages
 RUN yum update -y
 
@@ -19,7 +21,7 @@ ENV CFLAGS "-Os"
 ENV CXXFLAGS $CFLAGS
 
 # RUN yum groupinstall "Development Tools"
-RUN yum install -y tar gzip libjpeg-devel libpng-devel libtiff-devel
+RUN yum install -y tar gzip libjpeg-devel libpng-devel libtiff-devel libwebp-devel
 
 ###############################################################################
 # GhostScript
@@ -28,10 +30,10 @@ RUN yum install -y tar gzip libjpeg-devel libpng-devel libtiff-devel
 WORKDIR /root
 
 RUN curl -LO \
-  https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/gs952/ghostscript-9.52.tar.gz
-RUN tar zxvf ghostscript-9.52.tar.gz
+  https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/gs952/ghostscript-${GHOSTSCRIPT_VERSION}.tar.gz
+RUN tar zxvf ghostscript-${GHOSTSCRIPT_VERSION}.tar.gz
 
-WORKDIR ghostscript-9.52
+WORKDIR /root/ghostscript-${GHOSTSCRIPT_VERSION}
 RUN ./configure --prefix=/opt
 RUN make install
 
@@ -43,11 +45,11 @@ WORKDIR /root
 
 RUN yum install -y gtk-doc gobject-introspection-devel expat-devel openjpeg2 openjpeg2-devel openjpeg2-tools
 
-RUN curl -o libvips-8.12.2.tar.gz \
-  https://codeload.github.com/libvips/libvips/tar.gz/v8.12.2
-RUN tar zxvf libvips-8.12.2.tar.gz
+RUN curl -o libvips-${LIBVIPS_VERSION}.tar.gz \
+  https://codeload.github.com/libvips/libvips/tar.gz/v${LIBVIPS_VERSION}
+RUN tar zxvf libvips-${LIBVIPS_VERSION}.tar.gz
 
-WORKDIR libvips-8.12.2
+WORKDIR /root/libvips-${LIBVIPS_VERSION}
 RUN ./autogen.sh --prefix=/opt
 RUN ./configure --prefix=/opt
 RUN make install
@@ -67,7 +69,7 @@ WORKDIR rpms
 # Download dependency RPMs
 RUN yumdownloader libjpeg-turbo.x86_64 libpng.x86_64 libtiff.x86_64 \
   libgomp.x86_64 libwebp.x86_64 jbigkit-libs.x86_64 openjpeg2.x86_64 \
-  glib2.x86_64 libmount.x86_64 libblkid.x86_64
+  glib2.x86_64 libmount.x86_64 libblkid.x86_64 libwebp.x86_64
 
 # Extract RPMs
 RUN rpmdev-extract *.rpm
