@@ -4,3 +4,4 @@
 !webpack.config.js
 !test.js
 !build-sharp.sh
+!build-libvips.sh

@@ -8,10 +8,9 @@
 ###############################################################################
 
 # Use AWS Lambda node build environment
-FROM public.ecr.aws/sam/build-nodejs16.x:latest
+FROM public.ecr.aws/sam/build-nodejs16.x:latest AS core
 
-ARG GHOSTSCRIPT_VERSION=9.52 \
-    LIBVIPS_VERSION=8.12.1
+
 # Update all existing packages
 RUN yum update -y
 
@@ -21,38 +20,59 @@ ENV CFLAGS "-Os"
 ENV CXXFLAGS $CFLAGS
 
 # RUN yum groupinstall "Development Tools"
-RUN yum install -y tar gzip libjpeg-devel libpng-devel libtiff-devel libwebp-devel
+RUN yum install -y tar gzip giflib-devel libjpeg-devel libpng-devel libtiff-devel
 
 ###############################################################################
 # GhostScript
 ###############################################################################
+ARG GHOSTSCRIPT_VERSION=9.52
 
 WORKDIR /root
 
-RUN curl -LO \
-  https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/gs952/ghostscript-${GHOSTSCRIPT_VERSION}.tar.gz
-RUN tar zxvf ghostscript-${GHOSTSCRIPT_VERSION}.tar.gz
+RUN curl -Lv \
+  https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/gs952/ghostscript-${GHOSTSCRIPT_VERSION}.tar.gz | tar zxv
 
 WORKDIR /root/ghostscript-${GHOSTSCRIPT_VERSION}
 RUN ./configure --prefix=/opt
 RUN make install
 
 ###############################################################################
-# libvips
+# libwebp
 ###############################################################################
+ARG LIBWEBP_VERSION=1.3.0
 
 WORKDIR /root
 
-RUN yum install -y gtk-doc gobject-introspection-devel expat-devel openjpeg2 openjpeg2-devel openjpeg2-tools
+RUN curl https://storage.googleapis.com/downloads.webmproject.org/releases/webp/libwebp-${LIBWEBP_VERSION}.tar.gz | tar zxv
 
-RUN curl -o libvips-${LIBVIPS_VERSION}.tar.gz \
-  https://codeload.github.com/libvips/libvips/tar.gz/v${LIBVIPS_VERSION}
-RUN tar zxvf libvips-${LIBVIPS_VERSION}.tar.gz
+WORKDIR /root/libwebp-${LIBWEBP_VERSION}
+
+RUN ./configure --prefix=/opt
+RUN make
+RUN make install
+
+###############################################################################
+# libvips
+###############################################################################
+ARG LIBVIPS_VERSION=8.14.1
+
+RUN pip3 install meson \
+ && curl -Lo /tmp/ninja-linux.zip https://github.com/ninja-build/ninja/releases/latest/download/ninja-linux.zip \
+ && unzip -d /usr/local/bin /tmp/ninja-linux.zip \
+ && rm /tmp/ninja-linux.zip
+
+WORKDIR /root
+
+RUN yum install -y gtk-doc gobject-introspection-devel expat-devel lcms2-devel openjpeg2 openjpeg2-devel openjpeg2-tools
+
+RUN curl https://codeload.github.com/libvips/libvips/tar.gz/v${LIBVIPS_VERSION} | tar zxv
 
 WORKDIR /root/libvips-${LIBVIPS_VERSION}
-RUN ./autogen.sh --prefix=/opt
-RUN ./configure --prefix=/opt
-RUN make install
+
+FROM core
+
+COPY build-libvips.sh .
+RUN ./build-libvips.sh
 
 ###############################################################################
 # RPM dependencies
@@ -64,24 +84,19 @@ WORKDIR /root
 RUN yum install -y yum-utils rpmdevtools
 
 RUN mkdir rpms
-WORKDIR rpms
+WORKDIR /root/rpms
 
 # Download dependency RPMs
 RUN yumdownloader libjpeg-turbo.x86_64 libpng.x86_64 libtiff.x86_64 \
-  libgomp.x86_64 libwebp.x86_64 jbigkit-libs.x86_64 openjpeg2.x86_64 \
-  glib2.x86_64 libmount.x86_64 libblkid.x86_64 libwebp.x86_64
+  libgomp.x86_64 jbigkit-libs.x86_64 openjpeg2.x86_64 \
+  glib2.x86_64 libmount.x86_64 libblkid.x86_64 giflib.x86_64 \
+  lcms2.x86_64
 
 # Extract RPMs
 RUN rpmdev-extract *.rpm
 RUN rm *.rpm
-
-# Copy all package files into /opt/rpms
+RUN for d in $(find . -name lib64 -type d); do mv $d ${d%%64}; done
 RUN cp -vR */usr/* /opt
-
-# The x86_64 packages extract as lib64, we need to move these files to lib
-RUN yum install -y rsync
-RUN rsync -av /opt/lib64/ /opt/lib/
-RUN rm -r /opt/lib64
 
 ###############################################################################
 # Node Dependencies
@@ -98,7 +113,7 @@ WORKDIR /root
 RUN mkdir -p sharp
 COPY build-sharp.sh /root/sharp
 WORKDIR /root/sharp
-RUN PKG_CONFIG_PATH=/opt/lib/pkgconfig ./build-sharp.sh
+RUN PKG_CONFIG_PATH=/opt/lib/pkgconfig:/opt/lib64/pkgconfig ./build-sharp.sh
 
 ###############################################################################
 # Zip all dependencies
