@@ -8,7 +8,7 @@
 ###############################################################################
 
 # Use AWS Lambda node build environment
-FROM public.ecr.aws/sam/build-nodejs16.x:latest AS core
+FROM public.ecr.aws/sam/build-nodejs18.x:latest AS core
 
 
 # Update all existing packages
@@ -25,12 +25,12 @@ RUN yum install -y tar gzip giflib-devel libjpeg-devel libpng-devel libtiff-deve
 ###############################################################################
 # GhostScript
 ###############################################################################
-ARG GHOSTSCRIPT_VERSION=9.52
+ARG GHOSTSCRIPT_VERSION=10.01.2
+ARG GHOSTSCRIPT_URL=https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/gs10012/ghostscript-${GHOSTSCRIPT_VERSION}.tar.gz
 
 WORKDIR /root
 
-RUN curl -Lv \
-  https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/gs952/ghostscript-${GHOSTSCRIPT_VERSION}.tar.gz | tar zxv
+RUN curl -Lv ${GHOSTSCRIPT_URL} | tar zxv
 
 WORKDIR /root/ghostscript-${GHOSTSCRIPT_VERSION}
 RUN ./configure --prefix=/opt
@@ -39,7 +39,7 @@ RUN make install
 ###############################################################################
 # libwebp
 ###############################################################################
-ARG LIBWEBP_VERSION=1.3.0
+ARG LIBWEBP_VERSION=1.3.1
 
 WORKDIR /root
 
@@ -54,7 +54,7 @@ RUN make install
 ###############################################################################
 # libvips
 ###############################################################################
-ARG LIBVIPS_VERSION=8.14.1
+ARG LIBVIPS_VERSION=8.14.2
 
 RUN pip3 install meson \
  && curl -Lo /tmp/ninja-linux.zip https://github.com/ninja-build/ninja/releases/latest/download/ninja-linux.zip \
