@@ -13,6 +13,7 @@ Resources:
         - nodejs16.x
         - nodejs18.x
       LicenseInfo: Apache-2.0
+      RetentionPolicy: Retain
   LayerPermission:
     Type: AWS::Lambda::LayerVersionPermission
     Properties: 
