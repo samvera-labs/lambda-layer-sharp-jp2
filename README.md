@@ -1,5 +1,8 @@
-# AWS Lambda layer for Sharp
+# Deprecation Notice
 
+To account for the new build and packaging systems used by `sharp` (>= v0.33.0) and `libvips` (>= v8.14.0), this repo has been superseded by [samvera-labs/sharp-jp2-lambda-layer ](https://github.com/samvera-labs/sharp-jp2-lambda-layer).
+
+# AWS Lambda layer for Sharp
 ![Releases](https://img.shields.io/github/v/release/samvera-labs/lambda-layer-sharp-jp2.svg)
 ![Build Layer ZIP](https://github.com/samvera-labs/lambda-layer-sharp-jp2/workflows/Build%20Layer%20ZIP/badge.svg)
 
